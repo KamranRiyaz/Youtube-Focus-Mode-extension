@@ -1,12 +1,17 @@
 {
     "manifest_version": 3,
     "name": "Youtube Focus Mode",
-    "version": "1.0",
+    "version": "1.1",
     "description": "Hides comments, related videos and other distractions on Youtube",
+    "permissions": ["storage"],
     "content_scripts": [
         {
             "matches": ["*://www.youtube.com/*"],
             "js": ["content.js"]
         }
-    ]
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_title": "Youtube Focus Mode"
+    }
 }

@@ -1,4 +1,9 @@
-function hideDistractions() { 
+function hideDistractions(preferences) {
+  //when extension is disabled, just return
+  if(!preferences.isEnabled) {
+    return;
+  }
+
   // Hide Shorts link in the left sidebar
   const shortsLink = document.querySelector('a[title="Shorts"]');
   if (shortsLink) {
@@ -6,22 +11,29 @@ function hideDistractions() {
   }
 
   //hide the comment section below the player
-  const comments = document.getElementById('comments');
+  if(preferences.hideComments) {
+    const comments = document.getElementById('comments');
     if (comments) {
       comments.style.display = 'none';
     }
+  }
 
   //hide related videos sidebar
-  const relatedVideos = document.getElementById('related');
+  if(preferences.hideRelatedVideos){
+    const relatedVideos = document.getElementById('related');
     if (relatedVideos) {
       relatedVideos.style.display = 'none';
     }
+  }
 
   //hide home page recommended feed
-  const homeFeed = document.querySelector('ytd-two-column-browse-results-renderer');
+  if(preferences.hideHomeFeed){
+    const homeFeed = document.querySelector('ytd-two-column-browse-results-renderer');
     if (homeFeed) {
       homeFeed.style.display = 'none';
     }
+  }
+
 
   //hide sidebar ads
   const sidebarAds = document.getElementById('secondary');
@@ -38,9 +50,32 @@ function hideDistractions() {
     }
 }
 
-hideDistractions();
-  
-  // Re-run the function when the page content changes (due to YouTube's dynamic loading)
-  const observer = new MutationObserver(hideDistractions);
-  observer.observe(document.body, { childList: true, subtree: true });
-  
+//load default preferences and apply
+chrome.storage.sync.get({
+  isEnabled: true,
+  hideComments: true,
+  hideHomeFeed: true,
+  hideRelatedVideos: true
+}, (preferences) => {
+  observeAndHide(preferences);
+
+  //Listen for preference changes
+  chrome.storage.onChanged.addListener((changes, namespace) => {
+    if (namespace === 'sync') {
+      //Update preferences with any changes
+      for(let key in changes) {
+        preferences[key] = changes[key].values;
+      }
+      //reapply changes
+      observeAndHide(preferences);
+    }
+  });
+});
+
+function observeAndHide(preferences){
+  hideDistractions(preferences);
+
+  //observe changes to the page
+  const observer = new MutationObserver(() => hideDistractions(preferences));
+  observer.observe(document.body, {childList:true, subtree:true});
+}
