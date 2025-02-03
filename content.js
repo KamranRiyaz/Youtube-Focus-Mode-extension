@@ -17,16 +17,24 @@ function hideDistractions() {
       relatedVideos.style.display = 'none';
     }
 
-  //hide the end screen suggestions after completing a vid
-  const endScreens = document.getElementsByClassName('ytp-ce-element');
-    for (let i = 0; i < endScreens.length; i++) {
-      endScreens[i].style.display = 'none';
-    }
-
   //hide home page recommended feed
   const homeFeed = document.querySelector('ytd-two-column-browse-results-renderer');
     if (homeFeed) {
       homeFeed.style.display = 'none';
+    }
+
+  //hide sidebar ads
+  const sidebarAds = document.getElementById('secondary');
+    if (sidebarAds) {
+      sidebarAds.style.display = 'none';
+    }
+
+  //hide merch ads below the video description
+
+  //hide the end screen suggestions after completing a vid
+  const endScreens = document.getElementsByClassName('ytp-ce-element');
+    for (let i = 0; i < endScreens.length; i++) {
+      endScreens[i].style.display = 'none';
     }
 }
 
